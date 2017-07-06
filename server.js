@@ -43,9 +43,7 @@ app.get("/*", (req, res) => {
         );
         res.end();
       } else {
-        res.end({
-          error: "This url is not in the database."
-        });
+        res.end("This url is not in the database.");
       }
     }).catch((err) => {
       throw err;
