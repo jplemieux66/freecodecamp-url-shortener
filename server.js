@@ -31,5 +31,29 @@ app.get("/new/*", (req, res) => {
   });
 });
 
+app.get("/*", (req, res) => {
+  MongoClient.connect(mongoUrl, function (err, db) {
+    if (err) throw err;
+    const shortId = decodeURIComponent(req.url.substring(1));
+
+    db.collection("urls").findOne({ shortId }).then((urlDocument) => {
+      if (urlDocument) {
+        res.writeHead(301,
+          { Location: urlDocument.originalUrl }
+        );
+        res.end();
+      } else {
+        res.end({
+          error: "This url is not in the database."
+        });
+      }
+    }).catch((err) => {
+      throw err;
+    });
+
+    db.close();
+  });
+});
+
 app.listen(port);
 console.log(`Server is listening on port ${port}`);
